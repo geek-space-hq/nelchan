@@ -19,6 +19,6 @@ COPY --from=build /usr/src/app/requirements.txt .
 
 RUN pip install -r requirements.txt
 
-COPY . /usr/src/app/
+COPY . .
 
 CMD python cmd/dev.py
