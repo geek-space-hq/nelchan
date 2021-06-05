@@ -6,6 +6,7 @@ authors = ["sh1ma <in9lude@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+"discord.py" = "^1.7.2"
 
 [tool.poetry.dev-dependencies]
 black = "^21.5b2"
