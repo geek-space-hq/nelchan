@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot
 
-COGS = ["ready"]
+COGS = ["ready", "create_category"]
 
 
 class NelChan(Bot):

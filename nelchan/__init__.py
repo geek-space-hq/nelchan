@@ -1,1 +1,1 @@
-from .app import NelChan
+from .bot import NelChan
