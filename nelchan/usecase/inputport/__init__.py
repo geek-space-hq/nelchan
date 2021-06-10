@@ -1,6 +1,8 @@
-from .personal_ch_usecase import *
+from .topic_ch_usecase import *
 
 __all__ = [
-    "CreateCategoryForPersonalChannelInputData",
-    "CreateCategoryForPersonalChannelUseCase",
+    "CreateTopicChannelCategoryInputData",
+    "CreateTopicChannelCategoryUseCase",
+    "RegisterTopicChannelInputData",
+    "RegisterTopicChannelUseCase",
 ]

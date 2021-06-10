@@ -1,3 +1,8 @@
-from .personal_ch_outputport import *
+from .topic_ch_outputport import *
 
-__all__ = ["CreateCategoryForPersonalChannelOutputPort"]
+__all__ = [
+    "CreateTopicChannelCategoryOutputData",
+    "CreateTopicChannelCategoryOutputPort",
+    "RegisterTopicChannelOutputData",
+    "RegisterTopicChannelOutputPort",
+]

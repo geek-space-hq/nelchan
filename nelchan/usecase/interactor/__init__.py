@@ -1,3 +1,3 @@
-from .personal_ch_interactor import *
+from .topic_ch_interactor import *
 
-__all__ = ["CreateCategoryForPersonalChannelInteracotr"]
+__all__ = ["CreateTopicChannelCategroyInteractor"]

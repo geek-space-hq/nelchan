@@ -1,10 +1,10 @@
-NAME:=nelchan
+up:
+	docker-compose up -d
 
-build: 
-	docker build -t $(NAME):main -f ./docker/Dockerfile .
+down:
+	docker-compose down
 
-restart: 
-	stop start
+restart:
+	docker-compose down
+	docker-compose up -d
 
-start: 
-	docker run -it --env-file .env $(NAME):main

@@ -1,3 +1,3 @@
-from .personal_ch_presenter import *
+from .topic_ch_presenter import *
 
-__all__ = ["CreateCategoryForPersonalChannelPresenter"]
+__all__ = ["CreateTopicChannelCategoryPresenter"]

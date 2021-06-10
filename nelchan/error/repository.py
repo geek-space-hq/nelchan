@@ -1,0 +1,2 @@
+class DocumentNotFound(Exception):
+    pass
