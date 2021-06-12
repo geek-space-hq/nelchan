@@ -1,6 +1,4 @@
 from discord import Forbidden
-from nelchan.adapter.repository_impl import guild
-from nelchan.domain import repository
 from nelchan.domain.repository.guild import GuildRepository
 from nelchan.domain.repository.topic_ch import TopicChannelRepository
 from nelchan.usecase.inputport import (
@@ -41,11 +39,11 @@ class CreateTopicChannelCategoryInteractor(CreateTopicChannelCategoryUseCase):
             )
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
             await self.presenter.complete(output_data)
-        except Forbidden as e:
+        except Forbidden as error:
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
             await self.presenter.forbidden(output_data)
-        except Exception as e:
-            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, e)
+        except Exception as error:
+            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, error)
             await self.presenter.fail(output_data)
 
 
@@ -60,11 +58,11 @@ class RegisterTopicChannelInteractor(RegisterTopicChannelUseCase):
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
 
-    async def handle(self, input_data: CreateTopicChannelCategoryInputData):
+    async def handle(self, input_data: RegisterTopicChannelInputData):
         channel_id = input_data.ctx.channel.id
         try:
             # 既に登録されている場合
-            if await self.repository.get_by_id(channel_id):
+            if await self.channel_repository.get_by_id(channel_id):
                 output_data = RegisterTopicChannelOutputData(input_data.ctx)
                 self.presenter.already_registered(output_data)
                 return
@@ -75,14 +73,14 @@ class RegisterTopicChannelInteractor(RegisterTopicChannelUseCase):
                 output_data = RegisterTopicChannelOutputData(input_data.ctx)
                 self.presenter.not_world_category(output_data)
                 return
-            await self.repository.create(
+            await self.channel_repository.create(
                 channel_id=channel_id, guild_id=input_data.ctx.guild.id
             )
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
             await self.presenter.complete(output_data)
-        except Forbidden as e:
-            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, e)
+        except Forbidden as error:
+            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, error)
             await self.presenter.forbidden(output_data)
-        except Exception as e:
-            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, e)
+        except Exception as error:
+            output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, error)
             await self.presenter.fail(output_data)
