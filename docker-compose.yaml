@@ -3,7 +3,7 @@ services:
   bot:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     environment:
       - FIRESTORE_EMULATOR_HOST=firestore_emulator:8200
     env_file: .env

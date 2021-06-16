@@ -89,7 +89,7 @@ class SetTopicPresenter(SetTopicOutputPort):
         await output_data.ctx.send("既に話題は設定されています")
 
     async def forbidden(self, output_data: SetTopicOutputData):
-        await output_data.ctx.send("許可されていない操作です")
+        await output_data.ctx.send(f"許可されていない操作です `{output_data.error}`")
 
     async def fail(self, output_data: SetTopicOutputData):
         await output_data.ctx.send(f"エラーが発生しました `{output_data.error}`")
