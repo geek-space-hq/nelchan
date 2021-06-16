@@ -5,4 +5,8 @@ __all__ = [
     "CreateTopicChannelCategoryUseCase",
     "RegisterTopicChannelInputData",
     "RegisterTopicChannelUseCase",
+    "UnregisterTopicChannelInputData",
+    "UnregisterTopicChannelUseCase",
+    "InitTopicChannelCategoryInputData",
+    "InitTopicChannelCategoryUseCase",
 ]

@@ -1,6 +1,8 @@
 import os
 import sys
 
+os.environ["ENV"] = "dev"
+
 sys.path.append("/usr/src/app")
 
 from nelchan import NelChan

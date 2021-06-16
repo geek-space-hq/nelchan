@@ -9,6 +9,7 @@ python = "^3.9"
 "discord.py" = "^1.7.2"
 firebase-admin = "^5.0.0"
 motor = "^2.4.0"
+google-cloud-secret-manager = "^2.5.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.5b2"

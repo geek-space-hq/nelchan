@@ -16,3 +16,7 @@ class TopicChannelRepository(ABC):
     @abstractmethod
     async def update(self, channel_id: str, topic_allocated: bool = False) -> None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, channel_id: str) -> None:
+        raise NotImplementedError

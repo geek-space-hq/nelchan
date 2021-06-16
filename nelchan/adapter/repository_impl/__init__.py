@@ -1,2 +1,2 @@
-from .guild import GuildRepositoryImplForMongo
-from .topic_ch import TopicChannelRepositoryImplForMongo
+from .guild import GuildRepositoryImpl, GuildRepositoryImplForMongo
+from .topic_ch import TopicChannelRepositoryImpl, TopicChannelRepositoryImplForMongo

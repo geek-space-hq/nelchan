@@ -5,4 +5,12 @@ __all__ = [
     "CreateTopicChannelCategoryOutputPort",
     "RegisterTopicChannelOutputData",
     "RegisterTopicChannelOutputPort",
+    "UnregisterTopicChannelOutputData",
+    "UnregisterTopicChannelOutputPort",
+    "SetTopicOutputData",
+    "SetTopicOutputPort",
+    "UnsetTopicOutputData",
+    "UnsetTopicOutputPort",
+    "InitTopicChannelCategoryOutputData",
+    "InitTopicChannelCategoryOutputPort",
 ]
