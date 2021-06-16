@@ -1,12 +1,13 @@
 from functools import lru_cache
-from urllib.parse import quote_plus
 
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+# from urllib.parse import quote_plus
+
 
 @lru_cache
-def get_firestore_client(project_id: str) -> AsyncIOMotorDatabase:
+def get_firestore_client(project_id: str) -> firestore.firestore.AsyncClient:
     cred = credentials.ApplicationDefault()
     firebase_admin.initialize_app(
         cred,

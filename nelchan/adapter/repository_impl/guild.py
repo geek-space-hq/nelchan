@@ -18,6 +18,7 @@ class GuildRepositoryImpl(GuildRepository):
         guild = await self.collection.where("guildId", "==", guild_id).get()
         if not guild:
             return None
+        guild = guild[0]
         return Guild(guild_id=guild_id, topic_category_id=guild.get("topicCategoryId"))
 
     async def create(
@@ -29,7 +30,7 @@ class GuildRepositoryImpl(GuildRepository):
 
     async def update(self, guild_id: str, topic_category_id: Optional[str]) -> None:
         doc = await self.collection.where("guildId", "==", guild_id).get()
-        await doc.reference.set(
+        await doc[0].reference.set(
             {"guildId": guild_id, "topicCategoryId": topic_category_id}
         )
 

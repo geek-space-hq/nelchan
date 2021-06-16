@@ -18,6 +18,7 @@ class TopicChannelRepositoryImpl(TopicChannelRepository):
         channel = await self.collection.where("channelId", "==", channel_id).get()
         if not channel:
             return None
+        channel = channel[0]
         return TopicChannel(
             channel_id=channel_id,
             guild_id=channel.get("guildId"),
@@ -39,7 +40,7 @@ class TopicChannelRepositoryImpl(TopicChannelRepository):
         self, channel_id: str, guild_id: str, topic_allocated: bool = False
     ) -> None:
         doc = await self.collection.where("channelId", "==", channel_id).get()
-        await doc.reference.set(
+        await doc[0].reference.set(
             {
                 "channelId": channel_id,
                 "guildId": guild_id,
@@ -49,7 +50,7 @@ class TopicChannelRepositoryImpl(TopicChannelRepository):
 
     async def delete(self, channel_id) -> None:
         doc = await self.collection.where("channelId", "==", channel_id).get()
-        await doc.reference.delete()
+        await doc[0].reference.delete()
 
 
 class TopicChannelRepositoryImplForMongo(TopicChannelRepository):

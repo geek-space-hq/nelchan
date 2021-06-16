@@ -201,7 +201,6 @@ class SetTopicInteractor(SetTopicUseCase):
         self.guild_repository = guild_repository
 
     async def handle(self, input_data: SetTopicInputData):
-        print("a")
         # ワールド用カテゴリが登録されていない、またはチャンネルが登録されていない場合
         if (
             await self.guild_repository.get_by_id(input_data.ctx.guild.id) is None
