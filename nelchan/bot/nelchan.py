@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot
 
-COGS = ["ready", "topic_channel"]
+COGS = ["ready", "topic_ch"]
 
 
 class NelChan(Bot):
