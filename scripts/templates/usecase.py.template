@@ -1,0 +1,12 @@
+
+
+@dataclass
+class {name}InputData:
+    ctx: Context
+    bot: Bot
+
+
+class {name}UseCase(ABC):
+    @abstractmethod
+    async def handle(self, input_data: {name}InputData) -> None:
+        raise NotImplementedError

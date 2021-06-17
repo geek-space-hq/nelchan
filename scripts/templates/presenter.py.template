@@ -1,0 +1,11 @@
+
+
+class {name}Presenter({name}OutputPort):
+    async def forbidden(self, output_data: {name}OutputData):
+        await output_data.ctx.send("")
+
+    async def fail(self, output_data: {name}OutputData):
+        await output_data.ctx.send(f"エラーが発生しました `{output_data.error}`")
+
+    async def complete(self, output_data: {name}OutputData):
+        await output_data.ctx.send("トピックを削除しました")
