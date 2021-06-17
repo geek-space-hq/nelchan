@@ -8,7 +8,7 @@ template_path = Path("./scripts/templates")
 def new_inputport(command_name, file_name):
     f = open(usecase_path / "inputport" / f"{file_name}_usecase.py", "a+")
 
-    with open(template_path / "/usecase.py.template", "r") as tmpl:
+    with open(template_path / "usecase.py.template", "r") as tmpl:
         template = tmpl.read()
 
     f.write(template.format(name=command_name))
@@ -18,7 +18,7 @@ def new_inputport(command_name, file_name):
 def new_outputport(command_name, file_name):
     f = open(usecase_path / "outputport" / f"{file_name}_outputport.py", "a+")
 
-    with open(template_path / "/outputport.py.template", "r") as tmpl:
+    with open(template_path / "outputport.py.template", "r") as tmpl:
         template = tmpl.read()
 
     f.write(template.format(name=command_name))
@@ -28,7 +28,7 @@ def new_outputport(command_name, file_name):
 def new_interactor(command_name, file_name):
     f = open(usecase_path / "interactor" / f"{file_name}_interactor.py", "a+")
 
-    with open(template_path / "/interactor.py.template", "r") as tmpl:
+    with open(template_path / "interactor.py.template", "r") as tmpl:
         template = tmpl.read()
 
     f.write(template.format(name=command_name))
@@ -38,7 +38,7 @@ def new_interactor(command_name, file_name):
 def new_presenter(command_name, file_name):
     f = open(usecase_path / "presenter" / f"{file_name}_presenter.py", "a+")
 
-    with open(template_path / "/presenter.py.template", "r") as tmpl:
+    with open(template_path / "presenter.py.template", "r") as tmpl:
         template = tmpl.read()
 
     f.write(template.format(name=command_name))
