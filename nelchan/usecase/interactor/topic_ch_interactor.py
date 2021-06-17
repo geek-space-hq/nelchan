@@ -216,7 +216,7 @@ class SetTopicInteractor(SetTopicUseCase):
         # 既に話題設定されている場合
         if channel.topic_allocated:
             output_data = SetTopicOutputData(input_data.ctx)
-            await self.presenter.topic_already_allocated()
+            await self.presenter.topic_already_allocated(output_data)
             return
 
         try:
