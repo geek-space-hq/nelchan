@@ -1,8 +1,11 @@
 import discord
 from discord import CategoryChannel, Forbidden
+from nelchan.domain.model.guild import Guild
 from nelchan.domain.repository.guild import GuildRepository
 from nelchan.domain.repository.topic_ch import TopicChannelRepository
 from nelchan.usecase.inputport import (
+    AllocateInputData,
+    AllocateUseCase,
     CreateTopicChannelCategoryInputData,
     CreateTopicChannelCategoryUseCase,
     InitTopicChannelCategoryInputData,
@@ -17,6 +20,8 @@ from nelchan.usecase.inputport import (
     UnsetTopicUseCase,
 )
 from nelchan.usecase.outputport import (
+    AllocateOutputData,
+    AllocateOutputPort,
     CreateTopicChannelCategoryOutputData,
     CreateTopicChannelCategoryOutputPort,
     InitTopicChannelCategoryOutputData,
@@ -84,8 +89,8 @@ class InitTopicChannelCategoryInteractor(InitTopicChannelCategoryUseCase):
                 input_data.ctx.guild.categories, id=int(input_data.category_id)
             )
             if not isinstance(category, CategoryChannel):
-                print(input_data.category_id)
                 return
+
             await self.repository.create(
                 guild_id=input_data.ctx.guild.id, topic_category_id=category.id
             )
@@ -281,3 +286,73 @@ class UnsetTopicInteractor(UnsetTopicUseCase):
         except Exception as error:
             output_data = (input_data.ctx, error)
             await self.presenter.fail(output_data)
+
+
+class AllocateInteractor(AllocateUseCase):
+    def __init__(
+        self,
+        presenter: AllocateOutputPort,
+        guild_repository: GuildRepository,
+        channel_repository: TopicChannelRepository,
+    ):
+        self.presenter = presenter
+        self.guild_repository = guild_repository
+        self.channel_repository = channel_repository
+
+    async def handle(self, input_data: AllocateInputData):
+        # ワールド用カテゴリが登録されてない
+        if (
+            guild := await self.guild_repository.get_by_id(input_data.ctx.guild.id)
+        ) is None:
+            return
+
+        guild: Guild = guild  # type: ignore
+        discord_guild: discord.Guild = input_data.ctx.guild
+
+        # 空いているチャンネルを探す
+        if (
+            channel := await self.channel_repository.get_vacant_channel(guild.guild_id)
+        ) is None:
+            # 無かったら新規作成
+            try:
+                created_channel = await discord_guild.create_text_channel(
+                    input_data.category_name,
+                    category=discord.utils.get(
+                        discord_guild.categories, id=int(guild.topic_category_id)
+                    ),
+                )
+            except Forbidden:
+                output_data = AllocateOutputData(input_data.ctx)
+                await self.presenter.forbidden(output_data)
+                return
+
+            await self.channel_repository.create(
+                channel_id=created_channel.id,
+                guild_id=guild.guild_id,
+                topic_allocated=True,
+            )
+            output_data = AllocateOutputData(
+                input_data.ctx, channel_mention=created_channel.mention
+            )
+            await self.presenter.complete_with_create_channel(output_data)
+        else:
+            # 有るならそこに話題設定
+            discord_channel: discord.TextChannel = discord.utils.get(
+                discord_guild.channels, id=int(channel.channel_id)
+            )
+            try:
+                await discord_channel.edit(name=input_data.category_name)
+            except Forbidden:
+                output_data = AllocateOutputData(input_data.ctx)
+                await self.presenter.forbidden(output_data)
+                return
+
+            await self.channel_repository.update(
+                channel_id=channel.channel_id,
+                guild_id=channel.guild_id,
+                topic_allocated=True,
+            )
+            output_data = AllocateOutputData(
+                input_data.ctx, channel_mention=discord_channel.mention
+            )
+            await self.presenter.complete(output_data)

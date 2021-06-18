@@ -12,7 +12,7 @@ class {name}OutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(self, output_data: {name}OutputData, error: Exception):
+    async def fail(self, output_data: {name}OutputData):
         raise NotImplementedError
 
     @abstractmethod

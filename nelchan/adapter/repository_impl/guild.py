@@ -28,7 +28,9 @@ class GuildRepositoryImpl(GuildRepository):
             {"guildId": guild_id, "topicCategoryId": topic_category_id}
         )
 
-    async def update(self, guild_id: str, topic_category_id: Optional[str]) -> None:
+    async def update(
+        self, guild_id: str, topic_category_id: Optional[str] = None
+    ) -> None:
         doc = await self.collection.where("guildId", "==", guild_id).get()
         await doc[0].reference.set(
             {"guildId": guild_id, "topicCategoryId": topic_category_id}
@@ -54,7 +56,9 @@ class GuildRepositoryImplForMongo(GuildRepository):
             {"guildId": guild_id, "topicCategoryId": topic_category_id}
         )
 
-    async def update(self, guild_id: str, topic_category_id: Optional[str]) -> None:
+    async def update(
+        self, guild_id: str, topic_category_id: Optional[str] = None
+    ) -> None:
         await self.collection.update_one(
             {"guildId": guild_id}, {"topicCategoryId": topic_category_id}
         )
