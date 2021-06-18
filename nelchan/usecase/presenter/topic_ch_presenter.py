@@ -81,7 +81,7 @@ class UnregisterTopicChannelPresneter(UnregisterTopicChannelOutputPort):
         await output_data.ctx.send(f"エラーが発生しました `{output_data.error}`")
 
     async def complete(self, output_data: UnregisterTopicChannelOutputData):
-        await output_data.ctx.send("このチャンネルをワールドとして登録しました！")
+        await output_data.ctx.send("このチャンネルのワールド登録を解除しました")
 
 
 class SetTopicPresenter(SetTopicOutputPort):

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from nelchan.domain.model.topic_ch import TopicChannel
 

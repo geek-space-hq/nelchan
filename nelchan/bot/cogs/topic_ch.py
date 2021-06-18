@@ -102,7 +102,7 @@ class Topic(Cog):
 
 
 def setup(bot: Bot) -> None:
-    import os
+    import os  # pylint: disable=import-outside-toplevel
 
     environment = os.environ["ENV"]
     if environment == "dev":
