@@ -6,7 +6,7 @@ from nelchan.domain.model.guild import Guild
 
 class GuildRepository(ABC):
     @abstractmethod
-    async def get_by_id(self, guild_id: str) -> Guild:
+    async def get_by_id(self, guild_id: str) -> Optional[Guild]:
         raise NotImplementedError
 
     @abstractmethod

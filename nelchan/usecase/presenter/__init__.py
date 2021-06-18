@@ -6,4 +6,6 @@ __all__ = [
     "UnregisterTopicChannelPresneter",
     "SetTopicPresenter",
     "UnsetTopicPresenter",
+    "InitTopicChannelCategoryPresenter",
+    "AllocatePresenter",
 ]

@@ -13,4 +13,6 @@ __all__ = [
     "SetTopicUseCase",
     "UnsetTopicInputData",
     "UnsetTopicUseCase",
+    "AllocateInputData",
+    "AllocateUseCase",
 ]

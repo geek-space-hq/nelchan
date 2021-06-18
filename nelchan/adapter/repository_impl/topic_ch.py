@@ -20,7 +20,7 @@ class TopicChannelRepositoryImpl(TopicChannelRepository):
             return None
         channel = channel[0]
         return TopicChannel(
-            channel_id=channel_id,
+            channel_id=channel.get("channelId"),
             guild_id=channel.get("guildId"),
             topic_allocated=channel.get("topicAllocated"),
         )
@@ -48,9 +48,25 @@ class TopicChannelRepositoryImpl(TopicChannelRepository):
             },
         )
 
-    async def delete(self, channel_id) -> None:
+    async def delete(self, channel_id: str) -> None:
         doc = await self.collection.where("channelId", "==", channel_id).get()
         await doc[0].reference.delete()
+
+    async def get_vacant_channel(self, guild_id: str) -> Optional[TopicChannel]:
+        channels_collection = (
+            await self.collection.where("guildId", "==", guild_id)
+            .where("topicAllocated", "==", False)
+            .get()
+        )
+        if not channels_collection:
+            return None
+
+        channel = channels_collection[0]
+        return TopicChannel(
+            channel_id=channel.get("channelId"),
+            guild_id=channel.get("guildId"),
+            topic_allocated=channel.get("topicAllocated"),
+        )
 
 
 class TopicChannelRepositoryImplForMongo(TopicChannelRepository):
@@ -93,5 +109,17 @@ class TopicChannelRepositoryImplForMongo(TopicChannelRepository):
             },
         )
 
-    async def delete(self, channel_id) -> None:
+    async def delete(self, channel_id: str) -> None:
         await self.collection.delete_one({"channelId": channel_id})
+
+    async def get_vacant_channel(self, guild_id: str) -> Optional[TopicChannel]:
+        channel = await self.collection.find_one(
+            {"guildId": guild_id, "topicAllocated": False}
+        )
+        if not channel:
+            return None
+        return TopicChannel(
+            channel_id=channel["channelId"],
+            guild_id=channel["guildId"],
+            topic_allocated=channel["topicAllocated"],
+        )

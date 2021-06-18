@@ -13,4 +13,6 @@ __all__ = [
     "UnsetTopicOutputPort",
     "InitTopicChannelCategoryOutputData",
     "InitTopicChannelCategoryOutputPort",
+    "AllocateOutputData",
+    "AllocateOutputPort",
 ]
