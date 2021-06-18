@@ -9,4 +9,8 @@ __all__ = [
     "UnregisterTopicChannelUseCase",
     "InitTopicChannelCategoryInputData",
     "InitTopicChannelCategoryUseCase",
+    "SetTopicInputData",
+    "SetTopicUseCase",
+    "UnsetTopicInputData",
+    "UnsetTopicUseCase",
 ]
