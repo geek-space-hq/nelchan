@@ -1,3 +1,4 @@
+from .dictionary_outputport import *
 from .topic_ch_outputport import *
 
 __all__ = [
@@ -15,4 +16,8 @@ __all__ = [
     "InitTopicChannelCategoryOutputPort",
     "AllocateOutputData",
     "AllocateOutputPort",
+    "AddOutputData",
+    "AddOutputPort",
+    "ResponseOutputData",
+    "ResponseOutputPort",
 ]

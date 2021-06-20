@@ -1,3 +1,4 @@
+from .dictionary_usecase import *
 from .topic_ch_usecase import *
 
 __all__ = [
@@ -15,4 +16,10 @@ __all__ = [
     "UnsetTopicUseCase",
     "AllocateInputData",
     "AllocateUseCase",
+    "AddInputData",
+    "AddUseCase",
+    "DeleteInputData",
+    "DeleteUseCase",
+    "ResponseInputData",
+    "ResponseUseCase",
 ]
