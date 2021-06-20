@@ -1,3 +1,5 @@
+from nelchan.usecase.presenter.dictionary_presenter import *
+
 from .topic_ch_presenter import *
 
 __all__ = [
@@ -8,4 +10,6 @@ __all__ = [
     "UnsetTopicPresenter",
     "InitTopicChannelCategoryPresenter",
     "AllocatePresenter",
+    "AddPresenter",
+    "DeletePresenter",
 ]
