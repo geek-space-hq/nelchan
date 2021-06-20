@@ -49,7 +49,7 @@ class Dictionary(Cog):
         input_data = AddInputData(key, value, ctx)
         await self.add_usecase.handle(input_data)
 
-    @dictionary.command(name="delete")
+    @dictionary.command(name="delete", aliases=["del", "remove", "rm"])
     async def delete(self, ctx: Context, key: str) -> None:
         input_data = DeleteInputData(key, ctx)
         await self.delete_usecase.handle(input_data)
