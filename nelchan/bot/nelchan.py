@@ -4,7 +4,7 @@ COGS = ["ready", "topic_ch", "dictionary"]
 
 
 class NelChan(Bot):
-    def __init__(self, commands_prefix: str = ("nel,", "Nel, ")):
+    def __init__(self, commands_prefix: tuple[str, ...] = ("nel,", "Nel, ")):
         super().__init__(command_prefix=when_mentioned_or(commands_prefix))
 
         for cog in COGS:
