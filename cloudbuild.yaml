@@ -1,6 +1,14 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
     args: ["build", "-t", "gcr.io/nelchan/nelchan-bot:latest", "."]
-  images: ["gcr.io/nelchan/nelchan-bot:latest"]
+    images: ["gcr.io/nelchan/nelchan-bot:latest"]
   - name: "gcr.io/cloud-builders/gcloud"
-    args: ["beta", "compute", "instances", "update-container", "nelchan-bot", "--container-image=gcr.io/nelchan/nelchan-bot:latest"]
+    args:
+      [
+        "beta",
+        "compute",
+        "instances",
+        "update-container",
+        "nelchan-bot",
+        "--container-image=gcr.io/nelchan/nelchan-bot:latest",
+      ]
