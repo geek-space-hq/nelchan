@@ -1,0 +1,11 @@
+
+
+class {name}Interactor({name}UseCase):
+    def __init__(
+        self,
+        presenter: {name}OutputPort,
+    ):
+        self.presenter = presenter
+
+    async def handle(self, input_data: {name}InputData):
+        ...

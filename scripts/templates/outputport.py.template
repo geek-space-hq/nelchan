@@ -1,0 +1,20 @@
+
+
+@dataclass
+class {name}OutputData:
+    ctx: Context
+    error: Optional[Exception] = None
+
+
+class {name}OutputPort(ABC):
+    @abstractmethod
+    async def forbidden(self, output_data: {name}OutputData):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def fail(self, output_data: {name}OutputData):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def complete(self, output_data: {name}OutputData):
+        raise NotImplementedError

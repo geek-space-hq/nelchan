@@ -77,3 +77,16 @@ class UnsetTopicUseCase(ABC):
     @abstractmethod
     async def handle(self, input_data: UnsetTopicInputData) -> None:
         raise NotImplementedError
+
+
+@dataclass
+class AllocateInputData:
+    topic_title: str
+    ctx: Context
+    bot: Bot
+
+
+class AllocateUseCase(ABC):
+    @abstractmethod
+    async def handle(self, input_data: AllocateInputData) -> None:
+        raise NotImplementedError

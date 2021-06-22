@@ -1,6 +1,10 @@
 from nelchan.usecase.outputport import (
+    AllocateOutputData,
+    AllocateOutputPort,
     CreateTopicChannelCategoryOutputData,
     CreateTopicChannelCategoryOutputPort,
+    InitTopicChannelCategoryOutputData,
+    InitTopicChannelCategoryOutputPort,
     RegisterTopicChannelOutputData,
     RegisterTopicChannelOutputPort,
     SetTopicOutputData,
@@ -9,10 +13,6 @@ from nelchan.usecase.outputport import (
     UnregisterTopicChannelOutputPort,
     UnsetTopicOutputData,
     UnsetTopicOutputPort,
-)
-from nelchan.usecase.outputport.topic_ch_outputport import (
-    InitTopicChannelCategoryOutputData,
-    InitTopicChannelCategoryOutputPort,
 )
 
 
@@ -81,7 +81,7 @@ class UnregisterTopicChannelPresneter(UnregisterTopicChannelOutputPort):
         await output_data.ctx.send(f"エラーが発生しました `{output_data.error}`")
 
     async def complete(self, output_data: UnregisterTopicChannelOutputData):
-        await output_data.ctx.send("このチャンネルをワールドとして登録しました！")
+        await output_data.ctx.send("このチャンネルのワールド登録を解除しました")
 
 
 class SetTopicPresenter(SetTopicOutputPort):
@@ -110,3 +110,21 @@ class UnsetTopicPresenter(UnsetTopicOutputPort):
 
     async def complete(self, output_data: UnsetTopicOutputData):
         await output_data.ctx.send("トピックを削除しました")
+
+
+class AllocatePresenter(AllocateOutputPort):
+    async def forbidden(self, output_data: AllocateOutputData):
+        await output_data.ctx.send("許可されていない操作です")
+
+    async def fail(self, output_data: AllocateOutputData):
+        await output_data.ctx.send(f"エラーが発生しました `{output_data.error}`")
+
+    async def complete(self, output_data: AllocateOutputData):
+        await output_data.ctx.send(
+            f"話題を空いていたチャンネルに設定しました {output_data.channel_mention}"
+        )
+
+    async def complete_with_create_channel(self, output_data: AllocateOutputData):
+        await output_data.ctx.send(
+            f"空いていたチャンネルが無かったため、新しくチャンネルを作成し、そこに話題を設定しました {output_data.channel_mention}"
+        )

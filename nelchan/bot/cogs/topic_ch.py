@@ -2,10 +2,14 @@ from discord.ext.commands import Bot, Cog, Context, group
 from nelchan.adapter.repository_impl import (
     GuildRepositoryImpl,
     GuildRepositoryImplForMongo,
+    TopicChannelLogRepositoryImpl,
+    TopicChannelLogRepositoryImplForMongo,
     TopicChannelRepositoryImpl,
     TopicChannelRepositoryImplForMongo,
 )
 from nelchan.usecase.inputport import (
+    AllocateInputData,
+    AllocateUseCase,
     CreateTopicChannelCategoryInputData,
     CreateTopicChannelCategoryUseCase,
     InitTopicChannelCategoryInputData,
@@ -20,6 +24,7 @@ from nelchan.usecase.inputport import (
     UnsetTopicUseCase,
 )
 from nelchan.usecase.interactor import (
+    AllocateInteractor,
     CreateTopicChannelCategoryInteractor,
     InitTopicChannelCategoryInteractor,
     RegisterTopicChannelInteractor,
@@ -28,14 +33,13 @@ from nelchan.usecase.interactor import (
     UnsetTopicInteractor,
 )
 from nelchan.usecase.presenter import (
+    AllocatePresenter,
     CreateTopicChannelCategoryPresenter,
+    InitTopicChannelCategoryPresenter,
     RegisterTopicChannelPresneter,
     SetTopicPresenter,
     UnregisterTopicChannelPresneter,
     UnsetTopicPresenter,
-)
-from nelchan.usecase.presenter.topic_ch_presenter import (
-    InitTopicChannelCategoryPresenter,
 )
 
 
@@ -49,6 +53,7 @@ class Topic(Cog):
         unregister_channel_usecase: UnregisterTopicChannelUseCase,
         set_topic_usecase: SetTopicUseCase,
         unset_topic_usecase: UnsetTopicUseCase,
+        allocate_usecase: AllocateUseCase,
     ) -> None:
         self.bot = bot
         self.create_category_usecase = create_category_usecase
@@ -57,6 +62,7 @@ class Topic(Cog):
         self.set_topic_usecase = set_topic_usecase
         self.unset_topic_usecase = unset_topic_usecase
         self.init_category_usecase = init_category_usecase
+        self.allocate_usecase = allocate_usecase
 
     @group(name="world", aliases=["w"])
     async def topic(self, ctx: Context) -> None:
@@ -90,7 +96,6 @@ class Topic(Cog):
     @topic.command(name="set", aliases=["s"])
     async def set_topic(self, ctx: Context, topic_title: str):
         """話題設定コマンド"""
-        print("hekk")
         input_data = SetTopicInputData(topic_title, ctx, self.bot)
         await self.set_topic_usecase.handle(input_data)
 
@@ -100,17 +105,25 @@ class Topic(Cog):
         input_data = UnsetTopicInputData(ctx, self.bot)
         await self.unset_topic_usecase.handle(input_data)
 
+    @topic.command(name="alloc", allias=["al"])
+    async def allocate(self, ctx: Context, category_name: str):
+        """話題を空いてるチャンネルにアロケートするコマンド"""
+        input_data = AllocateInputData(category_name, ctx, self.bot)
+        await self.allocate_usecase.handle(input_data)
+
 
 def setup(bot: Bot) -> None:
-    import os
+    import os  # pylint: disable=import-outside-toplevel
 
     environment = os.environ["ENV"]
     if environment == "dev":
         guild_repository = GuildRepositoryImplForMongo("nelchan", "channel")
         channel_repository = TopicChannelRepositoryImplForMongo("nelchan", "channel")
+        log_repository = TopicChannelLogRepositoryImplForMongo("nelchan", "channel")
     elif environment == "prod":
         guild_repository = GuildRepositoryImpl("nelchan")
         channel_repository = TopicChannelRepositoryImpl("nelchan")
+        log_repository = TopicChannelLogRepositoryImpl("nelchan")
 
     bot.add_cog(
         Topic(
@@ -133,15 +146,23 @@ def setup(bot: Bot) -> None:
                 presenter=SetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
+                log_repository=log_repository,
             ),
             unset_topic_usecase=UnsetTopicInteractor(
                 presenter=UnsetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
+                log_repository=log_repository,
             ),
             init_category_usecase=InitTopicChannelCategoryInteractor(
                 presenter=InitTopicChannelCategoryPresenter(),
                 repository=guild_repository,
+            ),
+            allocate_usecase=AllocateInteractor(
+                presenter=AllocatePresenter(),
+                guild_repository=guild_repository,
+                channel_repository=channel_repository,
+                log_repository=log_repository,
             ),
         )
     )

@@ -21,9 +21,7 @@ class CreateTopicChannelCategoryOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(
-        self, output_data: CreateTopicChannelCategoryOutputData, error: Exception
-    ):
+    async def fail(self, output_data: CreateTopicChannelCategoryOutputData):
         raise NotImplementedError
 
     @abstractmethod
@@ -47,9 +45,7 @@ class InitTopicChannelCategoryOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(
-        self, output_data: InitTopicChannelCategoryOutputData, error: Exception
-    ):
+    async def fail(self, output_data: InitTopicChannelCategoryOutputData):
         raise NotImplementedError
 
     @abstractmethod
@@ -81,7 +77,7 @@ class RegisterTopicChannelOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(self, output_data: RegisterTopicChannelOutputData, error: Exception):
+    async def fail(self, output_data: RegisterTopicChannelOutputData):
         raise NotImplementedError
 
     @abstractmethod
@@ -115,9 +111,7 @@ class UnregisterTopicChannelOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(
-        self, output_data: UnregisterTopicChannelOutputData, error: Exception
-    ):
+    async def fail(self, output_data: UnregisterTopicChannelOutputData):
         raise NotImplementedError
 
     @abstractmethod
@@ -141,7 +135,7 @@ class SetTopicOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(self, output_data: SetTopicOutputData, error: Exception):
+    async def fail(self, output_data: SetTopicOutputData):
         raise NotImplementedError
 
     @abstractmethod
@@ -165,9 +159,34 @@ class UnsetTopicOutputPort(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def fail(self, output_data: UnsetTopicOutputData, error: Exception):
+    async def fail(self, output_data: UnsetTopicOutputData):
         raise NotImplementedError
 
     @abstractmethod
     async def complete(self, output_data: UnsetTopicOutputData):
+        raise NotImplementedError
+
+
+@dataclass
+class AllocateOutputData:
+    ctx: Context
+    error: Optional[Exception] = None
+    channel_mention: Optional[str] = None
+
+
+class AllocateOutputPort(ABC):
+    @abstractmethod
+    async def forbidden(self, output_data: AllocateOutputData):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def fail(self, output_data: AllocateOutputData):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def complete(self, output_data: AllocateOutputData):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def complete_with_create_channel(self, output_data: AllocateOutputData):
         raise NotImplementedError
