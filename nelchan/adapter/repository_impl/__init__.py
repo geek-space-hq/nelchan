@@ -1,3 +1,4 @@
 from .guild import GuildRepositoryImpl, GuildRepositoryImplForMongo
+from .log import TopicChannelLogRepositoryImpl, TopicChannelLogRepositoryImplForMongo
 from .topic_ch import TopicChannelRepositoryImpl, TopicChannelRepositoryImplForMongo
 from .word import WordRepositoryImpl, WordRepositoryImplForDev

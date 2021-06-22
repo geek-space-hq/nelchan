@@ -2,10 +2,11 @@ from discord.ext.commands import Bot, Cog, Context, group
 from nelchan.adapter.repository_impl import (
     GuildRepositoryImpl,
     GuildRepositoryImplForMongo,
+    TopicChannelLogRepositoryImpl,
+    TopicChannelLogRepositoryImplForMongo,
     TopicChannelRepositoryImpl,
     TopicChannelRepositoryImplForMongo,
 )
-from nelchan.domain import repository
 from nelchan.usecase.inputport import (
     AllocateInputData,
     AllocateUseCase,
@@ -118,9 +119,11 @@ def setup(bot: Bot) -> None:
     if environment == "dev":
         guild_repository = GuildRepositoryImplForMongo("nelchan", "channel")
         channel_repository = TopicChannelRepositoryImplForMongo("nelchan", "channel")
+        log_repository = TopicChannelLogRepositoryImplForMongo("nelchan", "channel")
     elif environment == "prod":
         guild_repository = GuildRepositoryImpl("nelchan")
         channel_repository = TopicChannelRepositoryImpl("nelchan")
+        log_repository = TopicChannelLogRepositoryImpl("nelchan")
 
     bot.add_cog(
         Topic(
@@ -143,11 +146,13 @@ def setup(bot: Bot) -> None:
                 presenter=SetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
+                log_repository=log_repository,
             ),
             unset_topic_usecase=UnsetTopicInteractor(
                 presenter=UnsetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
+                log_repository=log_repository,
             ),
             init_category_usecase=InitTopicChannelCategoryInteractor(
                 presenter=InitTopicChannelCategoryPresenter(),
@@ -157,6 +162,7 @@ def setup(bot: Bot) -> None:
                 presenter=AllocatePresenter(),
                 guild_repository=guild_repository,
                 channel_repository=channel_repository,
+                log_repository=log_repository,
             ),
         )
     )
