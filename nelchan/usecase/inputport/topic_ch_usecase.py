@@ -81,7 +81,7 @@ class UnsetTopicUseCase(ABC):
 
 @dataclass
 class AllocateInputData:
-    category_name: str
+    topic_title: str
     ctx: Context
     bot: Bot
 

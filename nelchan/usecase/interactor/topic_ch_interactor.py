@@ -1,8 +1,13 @@
+from datetime import datetime
+
 import discord
 from discord import CategoryChannel, Forbidden
 from nelchan.domain.model.guild import Guild
-from nelchan.domain.repository.guild import GuildRepository
-from nelchan.domain.repository.topic_ch import TopicChannelRepository
+from nelchan.domain.repository import (
+    GuildRepository,
+    TopicChannelLogRepository,
+    TopicChannelRepository,
+)
 from nelchan.usecase.inputport import (
     AllocateInputData,
     AllocateUseCase,
@@ -200,10 +205,12 @@ class SetTopicInteractor(SetTopicUseCase):
         presenter: SetTopicOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
+        log_repository: TopicChannelLogRepository,
     ):
         self.presenter = presenter
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
+        self.log_repository = log_repository
 
     async def handle(self, input_data: SetTopicInputData):
         # ワールド用カテゴリが登録されていない、またはチャンネルが登録されていない場合
@@ -231,6 +238,14 @@ class SetTopicInteractor(SetTopicUseCase):
                 guild_id=input_data.ctx.guild.id,
                 topic_allocated=True,
             )
+            await self.log_repository.create(
+                action="topic_set",
+                channel_id=input_data.ctx.channel.id,
+                message_id=input_data.ctx.message.id,
+                executed_user_id=input_data.ctx.message.author.id,
+                created_at=datetime.now(),
+                topic_title=input_data.title,
+            )
             output_data = SetTopicOutputData(input_data.ctx)
             await self.presenter.complete(output_data)
         except Forbidden as error:
@@ -247,10 +262,12 @@ class UnsetTopicInteractor(UnsetTopicUseCase):
         presenter: UnsetTopicOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
+        log_repository: TopicChannelLogRepository,
     ):
         self.presenter = presenter
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
+        self.log_repository = log_repository
 
     async def handle(self, input_data: UnsetTopicInputData):
         # ワールド用カテゴリが登録されていない、またはチャンネルが登録されていない場合
@@ -278,6 +295,14 @@ class UnsetTopicInteractor(UnsetTopicUseCase):
                 guild_id=input_data.ctx.guild.id,
                 topic_allocated=False,
             )
+            await self.log_repository.create(
+                action="topic_unset",
+                channel_id=input_data.ctx.channel.id,
+                message_id=input_data.ctx.message.id,
+                executed_user_id=input_data.ctx.message.author.id,
+                created_at=datetime.now(),
+                topic_title=None,
+            )
             output_data = UnsetTopicOutputData(input_data.ctx)
             await self.presenter.complete(output_data)
         except Forbidden as error:
@@ -294,10 +319,12 @@ class AllocateInteractor(AllocateUseCase):
         presenter: AllocateOutputPort,
         guild_repository: GuildRepository,
         channel_repository: TopicChannelRepository,
+        log_repository: TopicChannelLogRepository,
     ):
         self.presenter = presenter
         self.guild_repository = guild_repository
         self.channel_repository = channel_repository
+        self.log_repository = log_repository
 
     async def handle(self, input_data: AllocateInputData):
         # ワールド用カテゴリが登録されてない
@@ -316,7 +343,7 @@ class AllocateInteractor(AllocateUseCase):
             # 無かったら新規作成
             try:
                 created_channel = await discord_guild.create_text_channel(
-                    input_data.category_name,
+                    input_data.topic_title,
                     category=discord.utils.get(
                         discord_guild.categories, id=int(guild.topic_category_id)
                     ),
@@ -331,6 +358,14 @@ class AllocateInteractor(AllocateUseCase):
                 guild_id=guild.guild_id,
                 topic_allocated=True,
             )
+            await self.log_repository.create(
+                action="topic_set",
+                channel_id=input_data.ctx.channel.id,
+                message_id=input_data.ctx.message.id,
+                executed_user_id=input_data.ctx.message.author.id,
+                created_at=datetime.now(),
+                topic_title=input_data.topic_title,
+            )
             output_data = AllocateOutputData(
                 input_data.ctx, channel_mention=created_channel.mention
             )
@@ -341,7 +376,7 @@ class AllocateInteractor(AllocateUseCase):
                 discord_guild.channels, id=int(channel.channel_id)
             )
             try:
-                await discord_channel.edit(name=input_data.category_name)
+                await discord_channel.edit(name=input_data.topic_title)
             except Forbidden:
                 output_data = AllocateOutputData(input_data.ctx)
                 await self.presenter.forbidden(output_data)
