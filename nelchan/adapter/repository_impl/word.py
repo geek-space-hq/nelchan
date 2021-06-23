@@ -5,7 +5,10 @@ from typing import Optional
 from firebase_admin.firestore import firestore
 from nelchan.domain.model import Word
 from nelchan.domain.repository import WordRepository
-from nelchan.infrasturcture.firestore import get_firestore_client
+from nelchan.infrasturcture.firestore import (
+    get_firestore_client,
+    get_firestore_client_sync,
+)
 
 
 class WordRepositoryImpl(WordRepository):
@@ -35,13 +38,11 @@ class WordRepositoryImpl(WordRepository):
         self.collection.where("key", "==", key).delete()
 
     @classmethod
-    async def create_with_cache(cls, project_id) -> WordRepositoryImpl:
-        collection = firestore.AsyncCollectionReference = get_firestore_client(
+    def create_with_cache(cls, project_id) -> WordRepositoryImpl:
+        collection = firestore.CollectionReference = get_firestore_client_sync(
             project_id
         ).collection("dictionary")
-        cached_dict = {
-            doc.get("key"): doc.get("value") for doc in await collection.stream()
-        }
+        cached_dict = {doc.get("key"): doc.get("value") for doc in collection.stream()}
         return cls(project_id, cached_dict)
 
 
