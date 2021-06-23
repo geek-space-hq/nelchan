@@ -127,6 +127,10 @@ class SetTopicOutputData:
 
 class SetTopicOutputPort(ABC):
     @abstractmethod
+    async def invalid_parameter(self, output_data: SetTopicOutputData):
+        raise NotImplementedError
+
+    @abstractmethod
     async def topic_already_allocated(self, output_data: SetTopicOutputData):
         raise NotImplementedError
 
@@ -175,6 +179,10 @@ class AllocateOutputData:
 
 
 class AllocateOutputPort(ABC):
+    @abstractmethod
+    async def invalid_parameter(self, output_data: AllocateOutputData):
+        raise NotImplementedError
+
     @abstractmethod
     async def forbidden(self, output_data: AllocateOutputData):
         raise NotImplementedError

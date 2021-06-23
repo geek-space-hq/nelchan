@@ -85,6 +85,9 @@ class UnregisterTopicChannelPresneter(UnregisterTopicChannelOutputPort):
 
 
 class SetTopicPresenter(SetTopicOutputPort):
+    async def invalid_parameter(self, output_data: SetTopicOutputData):
+        await output_data.ctx.send("あ！今悪いことしようとしましたね！！！！")
+
     async def topic_already_allocated(self, output_data: SetTopicOutputData):
         await output_data.ctx.send("既に話題は設定されています")
 
@@ -113,6 +116,9 @@ class UnsetTopicPresenter(UnsetTopicOutputPort):
 
 
 class AllocatePresenter(AllocateOutputPort):
+    async def invalid_parameter(self, output_data: AllocateOutputData):
+        await output_data.ctx.send("あ！今悪いことしようとしましたね！！！！")
+
     async def forbidden(self, output_data: AllocateOutputData):
         await output_data.ctx.send("許可されていない操作です")
 

@@ -9,6 +9,9 @@ from nelchan.usecase.outputport import (
 
 
 class AddPresenter(AddOutputPort):
+    async def invalid_parameter(self, output_data: AddOutputData):
+        await output_data.ctx.send("あ！今悪いことしようとしましたね！！！！")
+
     async def complete(self, output_data: AddOutputData):
         await output_data.ctx.send(
             f"「{output_data.key}」は「{output_data.value}」なんですね...なるほど......"

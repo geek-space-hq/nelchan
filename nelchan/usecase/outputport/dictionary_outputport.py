@@ -16,6 +16,10 @@ class AddOutputData:
 
 class AddOutputPort(ABC):
     @abstractmethod
+    async def invalid_parameter(self, output_data: AddOutputData):
+        raise NotImplementedError
+
+    @abstractmethod
     async def complete(self, output_data: AddOutputData):
         raise NotImplementedError
 
