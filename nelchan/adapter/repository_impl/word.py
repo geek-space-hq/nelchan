@@ -39,9 +39,9 @@ class WordRepositoryImpl(WordRepository):
 
     @classmethod
     def create_with_cache(cls, project_id) -> WordRepositoryImpl:
-        collection = firestore.CollectionReference = get_firestore_client_sync(
-            project_id
-        ).collection("dictionary")
+        collection = (
+            firestore.CollectionReference
+        ) = get_firestore_client_sync().collection("dictionary")
         cached_dict = {doc.get("key"): doc.get("value") for doc in collection.stream()}
         return cls(project_id, cached_dict)
 
