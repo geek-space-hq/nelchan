@@ -1,6 +1,9 @@
 from discord import Message
 from discord.ext.commands import Bot, Cog, Context, group
-from nelchan.adapter.repository_impl.word import WordRepositoryImplForDev
+from nelchan.adapter.repository_impl.word import (
+    WordRepositoryImpl,
+    WordRepositoryImplForDev,
+)
 from nelchan.usecase.inputport import (
     AddInputData,
     AddUseCase,
@@ -39,17 +42,17 @@ class Dictionary(Cog):
         input_data = ResponseInputData(message)
         await self.response_usecase.handle(input_data)
 
-    @group(name="dict", aliases=["d"])
+    @group(name="dict", aliases=["d", "辞書"])
     async def dictionary(self, ctx: Context) -> None:
         if ctx.invoked_subcommand is None:
             await ctx.send("正確なサブコマンドを指定してよねっ！")
 
-    @dictionary.command(name="add")
+    @dictionary.command(name="add", aliases=["追加"])
     async def add(self, ctx: Context, key: str, value: str) -> None:
         input_data = AddInputData(key, value, ctx)
         await self.add_usecase.handle(input_data)
 
-    @dictionary.command(name="delete", aliases=["del", "remove", "rm"])
+    @dictionary.command(name="delete", aliases=["del", "remove", "rm", "削除"])
     async def delete(self, ctx: Context, key: str) -> None:
         input_data = DeleteInputData(key, ctx)
         await self.delete_usecase.handle(input_data)
@@ -62,8 +65,7 @@ def setup(bot: Bot) -> None:
     if environment == "dev":
         repository = WordRepositoryImplForDev()
     elif environment == "prod":
-        # repository = WordRepositoryImpl("nelchan")
-        repository = WordRepositoryImplForDev()
+        repository = WordRepositoryImpl.create_with_cache("nelchan")
 
     bot.add_cog(
         Dictionary(

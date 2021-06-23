@@ -1,5 +1,4 @@
 from discord.ext.commands import Bot
-from nelchan.domain import repository
 from nelchan.domain.repository import WordRepository
 from nelchan.usecase.inputport import (
     AddInputData,
@@ -25,6 +24,13 @@ class AddInteractor(AddUseCase):
         self.repository = repository
 
     async def handle(self, input_data: AddInputData):
+        if input_data.key == "" or input_data.value == "":
+            output_data = AddOutputData(
+                input_data.ctx, input_data.key, input_data.value
+            )
+            await self.presenter.invalid_parameter(output_data)
+            return
+
         await self.repository.create_or_update(input_data.key, input_data.value)
         output_data = AddOutputData(input_data.ctx, input_data.key, input_data.value)
         await self.presenter.complete(output_data)

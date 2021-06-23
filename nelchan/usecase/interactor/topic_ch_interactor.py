@@ -213,6 +213,11 @@ class SetTopicInteractor(SetTopicUseCase):
         self.log_repository = log_repository
 
     async def handle(self, input_data: SetTopicInputData):
+        if input_data.title == "":
+            output_data = SetTopicOutputData(input_data.ctx)
+            await self.presenter.invalid_parameter(output_data)
+            return
+
         # ワールド用カテゴリが登録されていない、またはチャンネルが登録されていない場合
         if (
             await self.guild_repository.get_by_id(input_data.ctx.guild.id) is None
@@ -327,6 +332,10 @@ class AllocateInteractor(AllocateUseCase):
         self.log_repository = log_repository
 
     async def handle(self, input_data: AllocateInputData):
+        if input_data.title == "":
+            output_data = AllocateOutputData(input_data.ctx)
+            await self.presenter.invalid_parameter(output_data)
+            return
         # ワールド用カテゴリが登録されてない
         if (
             guild := await self.guild_repository.get_by_id(input_data.ctx.guild.id)
