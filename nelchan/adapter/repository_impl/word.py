@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Optional
 
 from firebase_admin.firestore import firestore
@@ -7,27 +9,40 @@ from nelchan.infrasturcture.firestore import get_firestore_client
 
 
 class WordRepositoryImpl(WordRepository):
-    def __init__(self, project_id):
+    def __init__(self, project_id: str, cached_dict: dict[str, str]):
         self.collection: firestore.AsyncCollectionReference = get_firestore_client(
             project_id
         ).collection("dictionary")
 
+        self.cached_dict = cached_dict
+
     async def get_by_keyword(self, keyword: str) -> Optional[Word]:
-        word = await self.collection.where("key", "==", keyword).get()
-        if not word:
+        if not keyword in self.cached_dict.keys():
             return None
-        word = word[0]
-        return Word(key=word.get("key"), value=word.get("value"))
+
+        return Word(key=keyword, value=self.cached_dict[keyword])
 
     async def create_or_update(self, key: str, value: str) -> None:
-        word = await self.collection.where("key", "==", key).get()
-        if not word:
+        if not key in self.cached_dict.keys():
             await self.collection.document().set({"key": key, "value": value})
+            self.cached_dict[key] = value
         else:
-            await word[0].reference.set({"key": key, "value": value})
+            words = self.collection.where("k")
+            await words[0].reference.set({"key": key, "value": value})
+            self.cached_dict[key] = value
 
     async def delete(self, key: str) -> None:
         self.collection.where("key", "==", key).delete()
+
+    @classmethod
+    async def create_with_cache(cls, project_id) -> WordRepositoryImpl:
+        collection = firestore.AsyncCollectionReference = get_firestore_client(
+            project_id
+        ).collection("dictionary")
+        cached_dict = {
+            doc.get("key"): doc.get("value") for doc in await collection.stream()
+        }
+        return cls(project_id, cached_dict)
 
 
 class WordRepositoryImplForDev(WordRepository):
