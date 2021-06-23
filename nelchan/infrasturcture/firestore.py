@@ -16,3 +16,15 @@ def get_firestore_client(project_id: str) -> firestore.firestore.AsyncClient:
         },
     )
     return firestore.firestore.AsyncClient()
+
+
+@lru_cache
+def get_firestore_client_sync(project_id: str) -> firestore.firestore.AsyncClient:
+    cred = credentials.ApplicationDefault()
+    firebase_admin.initialize_app(
+        cred,
+        {
+            "projectId": project_id,
+        },
+    )
+    return firestore.firestore.Client()
