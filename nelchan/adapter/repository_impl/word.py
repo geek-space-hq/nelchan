@@ -25,9 +25,11 @@ class WordRepositoryImpl(WordRepository):
     async def create_or_update(self, key: str, value: str) -> None:
         if not key in self.cached_dict.keys():
             await self.collection.document().set({"key": key, "value": value})
+            self.cached_dict[key] = value
         else:
             words = self.collection.where("k")
             await words[0].reference.set({"key": key, "value": value})
+            self.cached_dict[key] = value
 
     async def delete(self, key: str) -> None:
         self.collection.where("key", "==", key).delete()
