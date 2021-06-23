@@ -30,7 +30,7 @@ class WordRepositoryImpl(WordRepository):
             await self.collection.document().set({"key": key, "value": value})
             self.cached_dict[key] = value
         else:
-            words = self.collection.where("k")
+            words = self.collection.where("key", "==", key)
             await words[0].reference.set({"key": key, "value": value})
             self.cached_dict[key] = value
 
