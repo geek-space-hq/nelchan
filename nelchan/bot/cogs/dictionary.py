@@ -39,17 +39,17 @@ class Dictionary(Cog):
         input_data = ResponseInputData(message)
         await self.response_usecase.handle(input_data)
 
-    @group(name="dict", aliases=["d"])
+    @group(name="dict", aliases=["d", "辞書"])
     async def dictionary(self, ctx: Context) -> None:
         if ctx.invoked_subcommand is None:
             await ctx.send("正確なサブコマンドを指定してよねっ！")
 
-    @dictionary.command(name="add")
+    @dictionary.command(name="add", aliases=["追加"])
     async def add(self, ctx: Context, key: str, value: str) -> None:
         input_data = AddInputData(key, value, ctx)
         await self.add_usecase.handle(input_data)
 
-    @dictionary.command(name="delete", aliases=["del", "remove", "rm"])
+    @dictionary.command(name="delete", aliases=["del", "remove", "rm", "削除"])
     async def delete(self, ctx: Context, key: str) -> None:
         input_data = DeleteInputData(key, ctx)
         await self.delete_usecase.handle(input_data)
