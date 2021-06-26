@@ -9,6 +9,6 @@ from nelchan import NelChan
 
 DISCORD_BOT_TOKEN = os.environ["DISCORD_BOT_TOKEN"]
 
-bot = NelChan(commands_prefix="test,")
+bot = NelChan(commands_prefix=("test,", "てすと、"))
 
 bot.run(DISCORD_BOT_TOKEN)

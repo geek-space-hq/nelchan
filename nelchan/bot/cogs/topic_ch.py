@@ -1,11 +1,8 @@
 from discord.ext.commands import Bot, Cog, Context, group
 from nelchan.adapter.repository_impl import (
     GuildRepositoryImpl,
-    GuildRepositoryImplForMongo,
     TopicChannelLogRepositoryImpl,
-    TopicChannelLogRepositoryImplForMongo,
     TopicChannelRepositoryImpl,
-    TopicChannelRepositoryImplForMongo,
 )
 from nelchan.usecase.inputport import (
     AllocateInputData,
@@ -113,17 +110,9 @@ class Topic(Cog):
 
 
 def setup(bot: Bot) -> None:
-    import os  # pylint: disable=import-outside-toplevel
-
-    environment = os.environ["ENV"]
-    if environment == "dev":
-        guild_repository = GuildRepositoryImplForMongo("nelchan", "channel")
-        channel_repository = TopicChannelRepositoryImplForMongo("nelchan", "channel")
-        log_repository = TopicChannelLogRepositoryImplForMongo("nelchan", "channel")
-    elif environment == "prod":
-        guild_repository = GuildRepositoryImpl("nelchan")
-        channel_repository = TopicChannelRepositoryImpl("nelchan")
-        log_repository = TopicChannelLogRepositoryImpl("nelchan")
+    guild_repository = GuildRepositoryImpl()
+    channel_repository = TopicChannelRepositoryImpl()
+    log_repository = TopicChannelLogRepositoryImpl()
 
     bot.add_cog(
         Topic(

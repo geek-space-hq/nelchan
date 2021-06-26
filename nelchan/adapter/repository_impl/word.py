@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Optional
 
 from firebase_admin.firestore import firestore
@@ -12,10 +13,13 @@ from nelchan.infrasturcture.firestore import (
 
 
 class WordRepositoryImpl(WordRepository):
-    def __init__(self, project_id: str, cached_dict: dict[str, str]):
-        self.collection: firestore.AsyncCollectionReference = get_firestore_client(
-            project_id
-        ).collection("dictionary")
+    def __init__(self, cached_dict: dict[str, str]):
+        env = os.environ["ENV"]
+
+        collection_name = "dictionary" if env == "prod" else "test_dictionary"
+        self.collection: firestore.AsyncCollectionReference = (
+            get_firestore_client().collection(collection_name)
+        )
 
         self.cached_dict = cached_dict
 
@@ -35,28 +39,17 @@ class WordRepositoryImpl(WordRepository):
             self.cached_dict[key] = value
 
     async def delete(self, key: str) -> None:
-        self.collection.where("key", "==", key).delete()
+        doc = await self.collection.where("key", "==", key).get()
+        await doc[0].reference.delete()
+        del self.cached_dict[key]
 
     @classmethod
-    def create_with_cache(cls, project_id) -> WordRepositoryImpl:
+    def create_with_cache(cls) -> WordRepositoryImpl:
+        env = os.environ["ENV"]
+
+        collection_name = "dictionary" if env == "prod" else "test_dictionary"
         collection = (
             firestore.CollectionReference
-        ) = get_firestore_client_sync().collection("dictionary")
+        ) = get_firestore_client_sync().collection(collection_name)
         cached_dict = {doc.get("key"): doc.get("value") for doc in collection.stream()}
-        return cls(project_id, cached_dict)
-
-
-class WordRepositoryImplForDev(WordRepository):
-    def __init__(self):
-        self.keyword_dict: dict = dict()
-
-    async def get_by_keyword(self, keyword: str) -> Optional[Word]:
-        if not keyword in self.keyword_dict.keys():
-            return None
-        return Word(key=keyword, value=self.keyword_dict[keyword])
-
-    async def create_or_update(self, key: str, value: str) -> None:
-        self.keyword_dict[key] = value
-
-    async def delete(self, key: str) -> None:
-        del self.keyword_dict[key]
+        return cls(cached_dict)
