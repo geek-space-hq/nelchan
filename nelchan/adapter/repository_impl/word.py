@@ -35,7 +35,8 @@ class WordRepositoryImpl(WordRepository):
             self.cached_dict[key] = value
 
     async def delete(self, key: str) -> None:
-        self.collection.where("key", "==", key).delete()
+        doc = await self.collection.where("key", "==", key).get()[0]
+        await doc.reference.delete()
 
     @classmethod
     def create_with_cache(cls, project_id) -> WordRepositoryImpl:
