@@ -1,6 +1,7 @@
 from discord import Message
 from discord.ext.commands import Bot, Cog, Context, group
 from nelchan.adapter.repository_impl.word import WordRepositoryImpl
+from nelchan.presenter import AddPresenter, DeletePresenter, ResponsePresenter
 from nelchan.usecase.inputport import (
     AddInputData,
     AddUseCase,
@@ -56,12 +57,12 @@ def setup(bot: Bot) -> None:
     bot.add_cog(
         Dictionary(
             bot,
-            add_usecase=AddInteractor(repository=repository, presenter=AddPresenter()),
+            add_usecase=AddInteractor(repository=repository, outputport=AddPresenter()),
             delete_usecase=DeleteInteractor(
-                repository=repository, presenter=DeletePresenter()
+                repository=repository, outputport=DeletePresenter()
             ),
             response_usecase=ResponseInteractor(
-                repository=repository, presenter=ResponsePresenter(), bot=bot
+                repository=repository, outputport=ResponsePresenter(), bot=bot
             ),
         )
     )
