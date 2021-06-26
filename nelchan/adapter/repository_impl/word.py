@@ -42,7 +42,6 @@ class WordRepositoryImpl(WordRepository):
         doc = await self.collection.where("key", "==", key).get()
         await doc[0].reference.delete()
         del self.cached_dict[key]
-
     @classmethod
     def create_with_cache(cls) -> WordRepositoryImpl:
         env = os.environ["ENV"]
