@@ -13,6 +13,7 @@ from nelchan.presenter import (
     UnregisterTopicChannelPresneter,
     UnsetTopicPresenter,
 )
+from nelchan.usecase import outputport
 from nelchan.usecase.inputport import (
     AllocateInputData,
     AllocateUseCase,
@@ -118,37 +119,37 @@ def setup(bot: Bot) -> None:
         Topic(
             bot,
             create_category_usecase=CreateTopicChannelCategoryInteractor(
-                presenter=CreateTopicChannelCategoryPresenter(),
+                outputport=CreateTopicChannelCategoryPresenter(),
                 repository=guild_repository,
             ),
             register_channel_usecase=RegisterTopicChannelInteractor(
-                presenter=RegisterTopicChannelPresneter(),
+                outputport=RegisterTopicChannelPresneter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
             ),
             unregister_channel_usecase=UnregisterTopicChannelInteractor(
-                presenter=UnregisterTopicChannelPresneter(),
+                outputport=UnregisterTopicChannelPresneter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
             ),
             set_topic_usecase=SetTopicInteractor(
-                presenter=SetTopicPresenter(),
+                outputport=SetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
                 log_repository=log_repository,
             ),
             unset_topic_usecase=UnsetTopicInteractor(
-                presenter=UnsetTopicPresenter(),
+                outputport=UnsetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
                 log_repository=log_repository,
             ),
             init_category_usecase=InitTopicChannelCategoryInteractor(
-                presenter=InitTopicChannelCategoryPresenter(),
+                outputport=InitTopicChannelCategoryPresenter(),
                 repository=guild_repository,
             ),
             allocate_usecase=AllocateInteractor(
-                presenter=AllocatePresenter(),
+                outputport=AllocatePresenter(),
                 guild_repository=guild_repository,
                 channel_repository=channel_repository,
                 log_repository=log_repository,
