@@ -1,12 +1,19 @@
 from discord.ext.commands import Bot, Cog, Context, group
 from nelchan.adapter.repository_impl import (
     GuildRepositoryImpl,
-    GuildRepositoryImplForMongo,
     TopicChannelLogRepositoryImpl,
-    TopicChannelLogRepositoryImplForMongo,
     TopicChannelRepositoryImpl,
-    TopicChannelRepositoryImplForMongo,
 )
+from nelchan.presenter import (
+    AllocatePresenter,
+    CreateTopicChannelCategoryPresenter,
+    InitTopicChannelCategoryPresenter,
+    RegisterTopicChannelPresneter,
+    SetTopicPresenter,
+    UnregisterTopicChannelPresneter,
+    UnsetTopicPresenter,
+)
+from nelchan.usecase import outputport
 from nelchan.usecase.inputport import (
     AllocateInputData,
     AllocateUseCase,
@@ -31,15 +38,6 @@ from nelchan.usecase.interactor import (
     SetTopicInteractor,
     UnregisterTopicChannelInteractor,
     UnsetTopicInteractor,
-)
-from nelchan.usecase.presenter import (
-    AllocatePresenter,
-    CreateTopicChannelCategoryPresenter,
-    InitTopicChannelCategoryPresenter,
-    RegisterTopicChannelPresneter,
-    SetTopicPresenter,
-    UnregisterTopicChannelPresneter,
-    UnsetTopicPresenter,
 )
 
 
@@ -113,53 +111,45 @@ class Topic(Cog):
 
 
 def setup(bot: Bot) -> None:
-    import os  # pylint: disable=import-outside-toplevel
-
-    environment = os.environ["ENV"]
-    if environment == "dev":
-        guild_repository = GuildRepositoryImplForMongo("nelchan", "channel")
-        channel_repository = TopicChannelRepositoryImplForMongo("nelchan", "channel")
-        log_repository = TopicChannelLogRepositoryImplForMongo("nelchan", "channel")
-    elif environment == "prod":
-        guild_repository = GuildRepositoryImpl("nelchan")
-        channel_repository = TopicChannelRepositoryImpl("nelchan")
-        log_repository = TopicChannelLogRepositoryImpl("nelchan")
+    guild_repository = GuildRepositoryImpl()
+    channel_repository = TopicChannelRepositoryImpl()
+    log_repository = TopicChannelLogRepositoryImpl()
 
     bot.add_cog(
         Topic(
             bot,
             create_category_usecase=CreateTopicChannelCategoryInteractor(
-                presenter=CreateTopicChannelCategoryPresenter(),
+                outputport=CreateTopicChannelCategoryPresenter(),
                 repository=guild_repository,
             ),
             register_channel_usecase=RegisterTopicChannelInteractor(
-                presenter=RegisterTopicChannelPresneter(),
+                outputport=RegisterTopicChannelPresneter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
             ),
             unregister_channel_usecase=UnregisterTopicChannelInteractor(
-                presenter=UnregisterTopicChannelPresneter(),
+                outputport=UnregisterTopicChannelPresneter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
             ),
             set_topic_usecase=SetTopicInteractor(
-                presenter=SetTopicPresenter(),
+                outputport=SetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
                 log_repository=log_repository,
             ),
             unset_topic_usecase=UnsetTopicInteractor(
-                presenter=UnsetTopicPresenter(),
+                outputport=UnsetTopicPresenter(),
                 channel_repository=channel_repository,
                 guild_repository=guild_repository,
                 log_repository=log_repository,
             ),
             init_category_usecase=InitTopicChannelCategoryInteractor(
-                presenter=InitTopicChannelCategoryPresenter(),
+                outputport=InitTopicChannelCategoryPresenter(),
                 repository=guild_repository,
             ),
             allocate_usecase=AllocateInteractor(
-                presenter=AllocatePresenter(),
+                outputport=AllocatePresenter(),
                 guild_repository=guild_repository,
                 channel_repository=channel_repository,
                 log_repository=log_repository,

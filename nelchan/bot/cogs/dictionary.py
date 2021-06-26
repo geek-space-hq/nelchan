@@ -1,9 +1,7 @@
 from discord import Message
 from discord.ext.commands import Bot, Cog, Context, group
-from nelchan.adapter.repository_impl.word import (
-    WordRepositoryImpl,
-    WordRepositoryImplForDev,
-)
+from nelchan.adapter.repository_impl.word import WordRepositoryImpl
+from nelchan.presenter import AddPresenter, DeletePresenter, ResponsePresenter
 from nelchan.usecase.inputport import (
     AddInputData,
     AddUseCase,
@@ -12,15 +10,10 @@ from nelchan.usecase.inputport import (
     ResponseInputData,
     ResponseUseCase,
 )
-from nelchan.usecase.interactor.dictionary_interactor import (
+from nelchan.usecase.interactor import (
     AddInteractor,
     DeleteInteractor,
     ResponseInteractor,
-)
-from nelchan.usecase.presenter.dictionary_presenter import (
-    AddPresenter,
-    DeletePresenter,
-    ResponsePresenter,
 )
 
 
@@ -59,23 +52,17 @@ class Dictionary(Cog):
 
 
 def setup(bot: Bot) -> None:
-    import os  # pylint: disable=import-outside-toplevel
-
-    environment = os.environ["ENV"]
-    if environment == "dev":
-        repository = WordRepositoryImplForDev()
-    elif environment == "prod":
-        repository = WordRepositoryImpl.create_with_cache("nelchan")
+    repository = WordRepositoryImpl.create_with_cache()
 
     bot.add_cog(
         Dictionary(
             bot,
-            add_usecase=AddInteractor(repository=repository, presenter=AddPresenter()),
+            add_usecase=AddInteractor(repository=repository, outputport=AddPresenter()),
             delete_usecase=DeleteInteractor(
-                repository=repository, presenter=DeletePresenter()
+                repository=repository, outputport=DeletePresenter()
             ),
             response_usecase=ResponseInteractor(
-                repository=repository, presenter=ResponsePresenter(), bot=bot
+                repository=repository, outputport=ResponsePresenter(), bot=bot
             ),
         )
     )

@@ -19,8 +19,8 @@ from nelchan.usecase.outputport import (
 
 
 class AddInteractor(AddUseCase):
-    def __init__(self, presenter: AddOutputPort, repository: WordRepository):
-        self.presenter = presenter
+    def __init__(self, outputport: AddOutputPort, repository: WordRepository):
+        self.outputport = outputport
         self.repository = repository
 
     async def handle(self, input_data: AddInputData):
@@ -28,35 +28,35 @@ class AddInteractor(AddUseCase):
             output_data = AddOutputData(
                 input_data.ctx, input_data.key, input_data.value
             )
-            await self.presenter.invalid_parameter(output_data)
+            await self.outputport.invalid_parameter(output_data)
             return
 
         await self.repository.create_or_update(input_data.key, input_data.value)
         output_data = AddOutputData(input_data.ctx, input_data.key, input_data.value)
-        await self.presenter.complete(output_data)
+        await self.outputport.complete(output_data)
 
 
 class DeleteInteractor(DeleteUseCase):
-    def __init__(self, presenter: DeleteOutputPort, repository: WordRepository):
-        self.presenter = presenter
+    def __init__(self, outputport: DeleteOutputPort, repository: WordRepository):
+        self.outputport = outputport
         self.repository = repository
 
     async def handle(self, input_data: DeleteInputData):
         if await self.repository.get_by_keyword(input_data.key) is None:
             output_data = DeleteOutputData(input_data.ctx, input_data.key)
-            await self.presenter.word_not_found(output_data)
+            await self.outputport.word_not_found(output_data)
             return
 
         await self.repository.delete(input_data.key)
         output_data = DeleteOutputData(input_data.ctx, input_data.key)
-        await self.presenter.complete(output_data)
+        await self.outputport.complete(output_data)
 
 
 class ResponseInteractor(ResponseUseCase):
     def __init__(
-        self, repository: WordRepository, presenter: ResponseOutputPort, bot: Bot
+        self, repository: WordRepository, outputport: ResponseOutputPort, bot: Bot
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.repository = repository
         self.bot = bot
 
@@ -69,4 +69,4 @@ class ResponseInteractor(ResponseUseCase):
         ) is None:
             return
         output_data = ResponseOutputData(input_data.message, word.value)
-        await self.presenter.complete(output_data)
+        await self.outputport.complete(output_data)
