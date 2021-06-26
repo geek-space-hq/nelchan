@@ -2,3 +2,9 @@
 Dockerfile.dev
 Makefile
 docker-compose.yaml
+nelchan.json
+scripts
+.venv
+__pycache__/
+.vscode
+.mypy_cache

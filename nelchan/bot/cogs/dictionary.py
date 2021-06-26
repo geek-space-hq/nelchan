@@ -1,9 +1,6 @@
 from discord import Message
 from discord.ext.commands import Bot, Cog, Context, group
-from nelchan.adapter.repository_impl.word import (
-    WordRepositoryImpl,
-    WordRepositoryImplForDev,
-)
+from nelchan.adapter.repository_impl.word import WordRepositoryImpl
 from nelchan.usecase.inputport import (
     AddInputData,
     AddUseCase,
@@ -59,13 +56,7 @@ class Dictionary(Cog):
 
 
 def setup(bot: Bot) -> None:
-    import os  # pylint: disable=import-outside-toplevel
-
-    environment = os.environ["ENV"]
-    if environment == "dev":
-        repository = WordRepositoryImplForDev()
-    elif environment == "prod":
-        repository = WordRepositoryImpl.create_with_cache("nelchan")
+    repository = WordRepositoryImpl.create_with_cache()
 
     bot.add_cog(
         Dictionary(
