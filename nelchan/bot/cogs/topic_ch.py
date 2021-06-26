@@ -4,6 +4,15 @@ from nelchan.adapter.repository_impl import (
     TopicChannelLogRepositoryImpl,
     TopicChannelRepositoryImpl,
 )
+from nelchan.presenter import (
+    AllocatePresenter,
+    CreateTopicChannelCategoryPresenter,
+    InitTopicChannelCategoryPresenter,
+    RegisterTopicChannelPresneter,
+    SetTopicPresenter,
+    UnregisterTopicChannelPresneter,
+    UnsetTopicPresenter,
+)
 from nelchan.usecase.inputport import (
     AllocateInputData,
     AllocateUseCase,
@@ -28,15 +37,6 @@ from nelchan.usecase.interactor import (
     SetTopicInteractor,
     UnregisterTopicChannelInteractor,
     UnsetTopicInteractor,
-)
-from nelchan.usecase.presenter import (
-    AllocatePresenter,
-    CreateTopicChannelCategoryPresenter,
-    InitTopicChannelCategoryPresenter,
-    RegisterTopicChannelPresneter,
-    SetTopicPresenter,
-    UnregisterTopicChannelPresneter,
-    UnsetTopicPresenter,
 )
 
 

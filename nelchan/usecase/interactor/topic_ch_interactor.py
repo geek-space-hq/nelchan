@@ -45,10 +45,10 @@ from nelchan.usecase.outputport import (
 class CreateTopicChannelCategoryInteractor(CreateTopicChannelCategoryUseCase):
     def __init__(
         self,
-        presenter: CreateTopicChannelCategoryOutputPort,
+        outputport: CreateTopicChannelCategoryOutputPort,
         repository: GuildRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.repository = repository
 
     async def handle(self, input_data: CreateTopicChannelCategoryInputData):
@@ -56,7 +56,7 @@ class CreateTopicChannelCategoryInteractor(CreateTopicChannelCategoryUseCase):
             # 既にカテゴリが存在する場合
             if await self.repository.get_by_id(input_data.ctx.guild.id):
                 output_data = InitTopicChannelCategoryOutputData(input_data.ctx)
-                await self.presenter.already_exist(output_data)
+                await self.outputport.already_exist(output_data)
                 return
             category = await input_data.ctx.guild.create_category(
                 input_data.category_name, position=100
@@ -65,22 +65,22 @@ class CreateTopicChannelCategoryInteractor(CreateTopicChannelCategoryUseCase):
                 guild_id=input_data.ctx.guild.id, topic_category_id=category.id
             )
             output_data = InitTopicChannelCategoryOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = InitTopicChannelCategoryOutputData(input_data.ctx)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = InitTopicChannelCategoryOutputData(input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class InitTopicChannelCategoryInteractor(InitTopicChannelCategoryUseCase):
     def __init__(
         self,
-        presenter: InitTopicChannelCategoryOutputPort,
+        outputport: InitTopicChannelCategoryOutputPort,
         repository: GuildRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.repository = repository
 
     async def handle(self, input_data: InitTopicChannelCategoryInputData):
@@ -88,7 +88,7 @@ class InitTopicChannelCategoryInteractor(InitTopicChannelCategoryUseCase):
             # 既にカテゴリが存在する場合
             if await self.repository.get_by_id(input_data.ctx.guild.id):
                 output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
-                await self.presenter.already_exist(output_data)
+                await self.outputport.already_exist(output_data)
                 return
             category = discord.utils.get(
                 input_data.ctx.guild.categories, id=int(input_data.category_id)
@@ -100,23 +100,23 @@ class InitTopicChannelCategoryInteractor(InitTopicChannelCategoryUseCase):
                 guild_id=input_data.ctx.guild.id, topic_category_id=category.id
             )
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = CreateTopicChannelCategoryOutputData(input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class RegisterTopicChannelInteractor(RegisterTopicChannelUseCase):
     def __init__(
         self,
-        presenter: RegisterTopicChannelOutputPort,
+        outputport: RegisterTopicChannelOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
 
@@ -127,42 +127,42 @@ class RegisterTopicChannelInteractor(RegisterTopicChannelUseCase):
             guild := await self.guild_repository.get_by_id(input_data.ctx.guild.id)
         ) is None:
             output_data = RegisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.category_is_not_exist(output_data)
+            await self.outputport.category_is_not_exist(output_data)
             return
 
         # ワールドカテゴリ内にチャンネルが存在しない場合
         elif guild.topic_category_id != input_data.ctx.channel.category.id:
             output_data = RegisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.not_world_category(output_data)
+            await self.outputport.not_world_category(output_data)
             return
 
         # 既に登録されている場合
         if await self.channel_repository.get_by_id(channel_id):
             output_data = RegisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.already_registered(output_data)
+            await self.outputport.already_registered(output_data)
             return
         try:
             await self.channel_repository.create(
                 channel_id=channel_id, guild_id=input_data.ctx.guild.id
             )
             output_data = RegisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = RegisterTopicChannelOutputData(input_data.ctx, error)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = RegisterTopicChannelOutputData(input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class UnregisterTopicChannelInteractor(UnregisterTopicChannelUseCase):
     def __init__(
         self,
-        presenter: UnregisterTopicChannelOutputPort,
+        outputport: UnregisterTopicChannelOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
 
@@ -173,41 +173,41 @@ class UnregisterTopicChannelInteractor(UnregisterTopicChannelUseCase):
             guild := await self.guild_repository.get_by_id(input_data.ctx.guild.id)
         ) is None:
             output_data = UnregisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.category_is_not_exist(output_data)
+            await self.outputport.category_is_not_exist(output_data)
             return
 
         # ワールドカテゴリ内にチャンネルが存在しない場合
         elif guild.topic_category_id != input_data.ctx.channel.category.id:
             output_data = UnregisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.not_world_category(output_data)
+            await self.outputport.not_world_category(output_data)
             return
 
         # そもそも登録されていない場合
         if await self.channel_repository.get_by_id(channel_id) is None:
             output_data = UnregisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.not_registered(output_data)
+            await self.outputport.not_registered(output_data)
             return
         try:
             await self.channel_repository.delete(channel_id)
             output_data = UnregisterTopicChannelOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = UnregisterTopicChannelOutputData(input_data.ctx, error)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = UnregisterTopicChannelOutputData(input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class SetTopicInteractor(SetTopicUseCase):
     def __init__(
         self,
-        presenter: SetTopicOutputPort,
+        outputport: SetTopicOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
         log_repository: TopicChannelLogRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
         self.log_repository = log_repository
@@ -215,7 +215,7 @@ class SetTopicInteractor(SetTopicUseCase):
     async def handle(self, input_data: SetTopicInputData):
         if input_data.title == "":
             output_data = SetTopicOutputData(input_data.ctx)
-            await self.presenter.invalid_parameter(output_data)
+            await self.outputport.invalid_parameter(output_data)
             return
 
         # ワールド用カテゴリが登録されていない、またはチャンネルが登録されていない場合
@@ -233,7 +233,7 @@ class SetTopicInteractor(SetTopicUseCase):
         # 既に話題設定されている場合
         if channel.topic_allocated:
             output_data = SetTopicOutputData(input_data.ctx)
-            await self.presenter.topic_already_allocated(output_data)
+            await self.outputport.topic_already_allocated(output_data)
             return
 
         try:
@@ -252,24 +252,24 @@ class SetTopicInteractor(SetTopicUseCase):
                 topic_title=input_data.title,
             )
             output_data = SetTopicOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = SetTopicOutputData(input_data.ctx, error)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = SetTopicOutputData(input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class UnsetTopicInteractor(UnsetTopicUseCase):
     def __init__(
         self,
-        presenter: UnsetTopicOutputPort,
+        outputport: UnsetTopicOutputPort,
         channel_repository: TopicChannelRepository,
         guild_repository: GuildRepository,
         log_repository: TopicChannelLogRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.channel_repository = channel_repository
         self.guild_repository = guild_repository
         self.log_repository = log_repository
@@ -290,7 +290,7 @@ class UnsetTopicInteractor(UnsetTopicUseCase):
         # 話題設定されていない場合
         if not channel.topic_allocated:
             output_data = UnsetTopicOutputData(input_data.ctx)
-            await self.presenter.topic_not_allocated(output_data)
+            await self.outputport.topic_not_allocated(output_data)
             return
 
         try:
@@ -309,24 +309,24 @@ class UnsetTopicInteractor(UnsetTopicUseCase):
                 topic_title=None,
             )
             output_data = UnsetTopicOutputData(input_data.ctx)
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)
         except Forbidden as error:
             output_data = UnsetTopicOutputData(input_data.ctx, error)
-            await self.presenter.forbidden(output_data)
+            await self.outputport.forbidden(output_data)
         except Exception as error:
             output_data = (input_data.ctx, error)
-            await self.presenter.fail(output_data)
+            await self.outputport.fail(output_data)
 
 
 class AllocateInteractor(AllocateUseCase):
     def __init__(
         self,
-        presenter: AllocateOutputPort,
+        outputport: AllocateOutputPort,
         guild_repository: GuildRepository,
         channel_repository: TopicChannelRepository,
         log_repository: TopicChannelLogRepository,
     ):
-        self.presenter = presenter
+        self.outputport = outputport
         self.guild_repository = guild_repository
         self.channel_repository = channel_repository
         self.log_repository = log_repository
@@ -334,7 +334,7 @@ class AllocateInteractor(AllocateUseCase):
     async def handle(self, input_data: AllocateInputData):
         if input_data.title == "":
             output_data = AllocateOutputData(input_data.ctx)
-            await self.presenter.invalid_parameter(output_data)
+            await self.outputport.invalid_parameter(output_data)
             return
         # ワールド用カテゴリが登録されてない
         if (
@@ -359,7 +359,7 @@ class AllocateInteractor(AllocateUseCase):
                 )
             except Forbidden:
                 output_data = AllocateOutputData(input_data.ctx)
-                await self.presenter.forbidden(output_data)
+                await self.outputport.forbidden(output_data)
                 return
 
             await self.channel_repository.create(
@@ -378,7 +378,7 @@ class AllocateInteractor(AllocateUseCase):
             output_data = AllocateOutputData(
                 input_data.ctx, channel_mention=created_channel.mention
             )
-            await self.presenter.complete_with_create_channel(output_data)
+            await self.outputport.complete_with_create_channel(output_data)
         else:
             # 有るならそこに話題設定
             discord_channel: discord.TextChannel = discord.utils.get(
@@ -388,7 +388,7 @@ class AllocateInteractor(AllocateUseCase):
                 await discord_channel.edit(name=input_data.topic_title)
             except Forbidden:
                 output_data = AllocateOutputData(input_data.ctx)
-                await self.presenter.forbidden(output_data)
+                await self.outputport.forbidden(output_data)
                 return
 
             await self.channel_repository.update(
@@ -399,4 +399,4 @@ class AllocateInteractor(AllocateUseCase):
             output_data = AllocateOutputData(
                 input_data.ctx, channel_mention=discord_channel.mention
             )
-            await self.presenter.complete(output_data)
+            await self.outputport.complete(output_data)

@@ -1,5 +1,4 @@
-from nelchan.usecase.presenter.dictionary_presenter import *
-
+from .dictionary_presenter import *
 from .topic_ch_presenter import *
 
 __all__ = [

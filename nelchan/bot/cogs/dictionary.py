@@ -9,15 +9,10 @@ from nelchan.usecase.inputport import (
     ResponseInputData,
     ResponseUseCase,
 )
-from nelchan.usecase.interactor.dictionary_interactor import (
+from nelchan.usecase.interactor import (
     AddInteractor,
     DeleteInteractor,
     ResponseInteractor,
-)
-from nelchan.usecase.presenter.dictionary_presenter import (
-    AddPresenter,
-    DeletePresenter,
-    ResponsePresenter,
 )
 
 
