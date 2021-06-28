@@ -332,7 +332,7 @@ class AllocateInteractor(AllocateUseCase):
         self.log_repository = log_repository
 
     async def handle(self, input_data: AllocateInputData):
-        if input_data.title == "":
+        if input_data.topic_title == "":
             output_data = AllocateOutputData(input_data.ctx)
             await self.outputport.invalid_parameter(output_data)
             return
